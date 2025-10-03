@@ -27,12 +27,18 @@ function Router() {
   );
 }
 
+interface User {
+  username: string;
+  email: string;
+  role: string;
+}
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userRole, setUserRole] = useState<string>("");
+  const [user, setUser] = useState<User | null>(null);
 
-  const handleLogin = (role: string) => {
-    setUserRole(role);
+  const handleLogin = (userData: User) => {
+    setUser(userData);
     setIsAuthenticated(true);
   };
 

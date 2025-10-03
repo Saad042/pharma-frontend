@@ -1,9 +1,46 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
+export function parseErrorResponse(errorData: any): string {
+  // Handle non_field_errors
+  if (errorData.non_field_errors && Array.isArray(errorData.non_field_errors)) {
+    return errorData.non_field_errors.join(", ");
+  }
+
+  // Handle field-specific errors
+  const fieldErrors: string[] = [];
+  for (const [field, messages] of Object.entries(errorData)) {
+    if (Array.isArray(messages)) {
+      fieldErrors.push(`${field}: ${messages.join(", ")}`);
+    } else if (typeof messages === "string") {
+      fieldErrors.push(`${field}: ${messages}`);
+    }
+  }
+
+  if (fieldErrors.length > 0) {
+    return fieldErrors.join("; ");
+  }
+
+  // Fallback to raw JSON
+  return JSON.stringify(errorData);
+}
+
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
-    const text = (await res.text()) || res.statusText;
-    throw new Error(`${res.status}: ${text}`);
+    let errorMessage: string;
+
+    try {
+      const errorData = await res.json();
+      errorMessage = parseErrorResponse(errorData);
+    } catch (parseError) {
+      // If JSON parsing fails, try to get text or use status
+      try {
+        errorMessage = await res.text();
+      } catch {
+        errorMessage = res.statusText || `HTTP ${res.status}`;
+      }
+    }
+
+    throw new Error(errorMessage);
   }
 }
 
@@ -12,9 +49,23 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const res = await fetch(url, {
+  const token = localStorage.getItem("access_token");
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+  const fullUrl = url.startsWith("http") ? url : `${baseUrl}${url}`;
+
+  const headers: Record<string, string> = {};
+
+  if (data) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  const res = await fetch(fullUrl, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers,
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
@@ -29,7 +80,19 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey.join("/") as string, {
+    const token = localStorage.getItem("access_token");
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+    const url = queryKey.join("/") as string;
+    const fullUrl = url.startsWith("http") ? url : `${baseUrl}${url}`;
+
+    const headers: Record<string, string> = {};
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const res = await fetch(fullUrl, {
+      headers,
       credentials: "include",
     });
 
