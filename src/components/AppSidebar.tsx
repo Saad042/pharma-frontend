@@ -1,4 +1,4 @@
-import { Home, Package, ShoppingCart, Settings, LogOut, Pill } from "lucide-react";
+import { Home, Package, ShoppingCart, Receipt, Settings, LogOut, Pill } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -19,6 +19,7 @@ const menuItems = [
   { title: "Dashboard", url: "/", icon: Home },
   { title: "Inventory", url: "/inventory", icon: Package },
   { title: "Billing", url: "/billing", icon: ShoppingCart },
+  { title: "Sales", url: "/sales", icon: Receipt },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 

@@ -1,6 +1,6 @@
 import { DashboardCard } from "@/components/DashboardCard";
 import { AlertCard } from "@/components/AlertCard";
-import { Package, DollarSign, TrendingUp, AlertTriangle, Clock, ShoppingCart } from "lucide-react";
+import { Package, DollarSign, TrendingUp, AlertTriangle, Clock, ShoppingCart, XCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -11,6 +11,7 @@ interface DashboardStats {
   transactions: number;
   low_stock_count: number;
   near_expiry_count: number;
+  cancelled_transactions: number;
   trends: {
     revenue_change: number;
     transactions_change: number;
@@ -93,6 +94,11 @@ export default function Dashboard() {
             icon={ShoppingCart}
             trend={formatTrend(stats.trends.transactions_change)}
             trendPositive={stats.trends.transactions_change >= 0}
+          />
+          <DashboardCard
+            title="Cancelled Transactions"
+            value={stats.cancelled_transactions.toString()}
+            icon={XCircle}
           />
         </div>
       )}

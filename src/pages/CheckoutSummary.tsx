@@ -4,7 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { FileText, CheckCircle, ArrowLeft } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { FileText, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface SaleItem {
@@ -24,6 +25,7 @@ interface Sale {
   subtotal: string;
   tax: string;
   total: string;
+  status: "completed" | "cancelled";
   created_by: number;
   created_by_username: string;
   created_at: string;
@@ -137,11 +139,31 @@ export default function CheckoutSummary() {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
-            <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
+          <div
+            className={`h-12 w-12 rounded-full flex items-center justify-center ${
+              sale.status === "completed"
+                ? "bg-green-100 dark:bg-green-900"
+                : "bg-red-100 dark:bg-red-900"
+            }`}
+          >
+            {sale.status === "completed" ? (
+              <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
+            ) : (
+              <XCircle className="h-6 w-6 text-red-600 dark:text-red-400" />
+            )}
           </div>
-          <div>
-            <h1 className="text-3xl font-bold">Payment Successful!</h1>
+          <div className="flex-1">
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-bold">
+                {sale.status === "completed" ? "Payment Successful!" : "Sale Canceled"}
+              </h1>
+              <Badge
+                variant={sale.status === "completed" ? "default" : "destructive"}
+                className={sale.status === "completed" ? "bg-green-600 hover:bg-green-700" : ""}
+              >
+                {sale.status === "completed" ? "Completed" : "Canceled"}
+              </Badge>
+            </div>
             <p className="text-muted-foreground">
               Invoice #{sale.id} - {new Date(sale.created_at).toLocaleString()}
             </p>
