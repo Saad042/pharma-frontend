@@ -16,14 +16,32 @@ interface Product {
 interface ProductSearchProps {
   products: Product[];
   onAddToCart: (product: Product) => void;
+  isLoading?: boolean;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
 }
 
-export function ProductSearch({ products, onAddToCart }: ProductSearchProps) {
-  const [search, setSearch] = useState("");
+export function ProductSearch({
+  products,
+  onAddToCart,
+  isLoading,
+  searchValue,
+  onSearchChange
+}: ProductSearchProps) {
+  const [localSearch, setLocalSearch] = useState("");
 
-  const filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const search = searchValue !== undefined ? searchValue : localSearch;
+  const handleSearchChange = (value: string) => {
+    if (onSearchChange) {
+      onSearchChange(value);
+    } else {
+      setLocalSearch(value);
+    }
+  };
+
+  const filteredProducts = searchValue !== undefined
+    ? products // Already filtered by API
+    : products.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <Card className="h-full">
@@ -36,14 +54,26 @@ export function ProductSearch({ products, onAddToCart }: ProductSearchProps) {
           <Input
             placeholder="Search medicines..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="pl-9"
             data-testid="input-product-search"
           />
         </div>
 
         <div className="space-y-2 max-h-[400px] overflow-auto">
-          {filteredProducts.map((product) => (
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-sm text-muted-foreground">Loading...</p>
+              </div>
+            </div>
+          ) : filteredProducts.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-8">
+              No products found
+            </p>
+          ) : (
+            filteredProducts.map((product) => (
             <div
               key={product.id}
               className="flex items-center justify-between p-3 border rounded-lg hover-elevate"
@@ -72,11 +102,7 @@ export function ProductSearch({ products, onAddToCart }: ProductSearchProps) {
                 </Button>
               </div>
             </div>
-          ))}
-          {filteredProducts.length === 0 && (
-            <p className="text-sm text-muted-foreground text-center py-8">
-              No products found
-            </p>
+            ))
           )}
         </div>
       </CardContent>

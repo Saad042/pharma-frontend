@@ -16,9 +16,16 @@ interface BillingCartProps {
   onUpdateQuantity: (id: string, quantity: number) => void;
   onRemoveItem: (id: string) => void;
   onCheckout?: () => void;
+  isCheckingOut?: boolean;
 }
 
-export function BillingCart({ items, onUpdateQuantity, onRemoveItem, onCheckout }: BillingCartProps) {
+export function BillingCart({
+  items,
+  onUpdateQuantity,
+  onRemoveItem,
+  onCheckout,
+  isCheckingOut
+}: BillingCartProps) {
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const tax = subtotal * 0.1;
   const total = subtotal + tax;
@@ -55,7 +62,7 @@ export function BillingCart({ items, onUpdateQuantity, onRemoveItem, onCheckout 
                     type="number"
                     value={item.quantity}
                     onChange={(e) => onUpdateQuantity(item.id, parseInt(e.target.value) || 1)}
-                    className="w-12 h-7 text-center p-1"
+                    className="w-12 h-7 text-center p-1 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                     data-testid={`input-quantity-${item.id}`}
                   />
                   <Button
@@ -100,13 +107,13 @@ export function BillingCart({ items, onUpdateQuantity, onRemoveItem, onCheckout 
           </div>
         </div>
 
-        <Button 
-          className="w-full" 
-          disabled={items.length === 0}
+        <Button
+          className="w-full"
+          disabled={items.length === 0 || isCheckingOut}
           onClick={onCheckout}
           data-testid="button-checkout"
         >
-          Checkout
+          {isCheckingOut ? "Processing..." : "Checkout"}
         </Button>
       </CardContent>
     </Card>
