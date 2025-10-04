@@ -77,6 +77,7 @@ function App() {
   const handleLogin = (userData: User) => {
     setUser(userData);
     setIsAuthenticated(true);
+    setLocation("/");
   };
 
   const handleLogout = () => {

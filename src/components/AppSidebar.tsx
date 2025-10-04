@@ -14,6 +14,7 @@ import {
 import { Link, useLocation } from "wouter";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/contexts/AuthContext";
 
 const menuItems = [
   { title: "Dashboard", url: "/", icon: Home },
@@ -25,6 +26,20 @@ const menuItems = [
 
 export function AppSidebar() {
   const [location] = useLocation();
+  const { user, logout } = useAuth();
+
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const getRoleDisplay = (role: string) => {
+    return role.charAt(0).toUpperCase() + role.slice(1);
+  };
 
   return (
     <Sidebar>
@@ -65,18 +80,23 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="p-4">
-        <div className="flex items-center gap-3 p-2 rounded-md hover-elevate active-elevate-2">
+        <div className="flex items-center gap-3 p-2 rounded-md">
           <Avatar>
-            <AvatarFallback className="bg-primary text-primary-foreground">AD</AvatarFallback>
+            <AvatarFallback className="bg-primary text-primary-foreground">
+              {user ? getInitials(user.username) : "?"}
+            </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">Admin User</p>
-            <Badge variant="secondary" className="text-xs mt-1">Administrator</Badge>
+            <p className="text-sm font-medium truncate">{user?.username || "User"}</p>
+            <Badge variant="secondary" className="text-xs mt-1">
+              {user ? getRoleDisplay(user.role) : ""}
+            </Badge>
           </div>
-          <button 
+          <button
             className="p-2 rounded-md hover-elevate active-elevate-2"
             data-testid="button-logout"
-            onClick={() => console.log('Logout clicked')}
+            onClick={logout}
+            title="Logout"
           >
             <LogOut className="h-4 w-4" />
           </button>
