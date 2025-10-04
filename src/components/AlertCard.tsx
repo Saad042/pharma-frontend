@@ -7,14 +7,18 @@ interface AlertCardProps {
   count: number;
   icon: LucideIcon;
   variant: "warning" | "destructive";
+  onClick?: () => void;
 }
 
-export function AlertCard({ title, count, icon: Icon, variant }: AlertCardProps) {
+export function AlertCard({ title, count, icon: Icon, variant, onClick }: AlertCardProps) {
   const borderColor = variant === "warning" ? "border-l-chart-3" : "border-l-chart-4";
   const iconColor = variant === "warning" ? "text-chart-3" : "text-chart-4";
 
   return (
-    <Card className={`border-l-4 ${borderColor}`}>
+    <Card
+      className={`border-l-4 ${borderColor} ${onClick ? "cursor-pointer hover:bg-muted/50 transition-colors" : ""}`}
+      onClick={onClick}
+    >
       <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         <Icon className={`h-4 w-4 ${iconColor}`} />

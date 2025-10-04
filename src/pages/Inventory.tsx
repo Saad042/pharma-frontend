@@ -8,6 +8,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocation } from "wouter";
 import {
   Select,
   SelectContent,
@@ -40,6 +41,7 @@ interface MedicinesResponse {
 type FilterType = "all" | "low_stock" | "near_expiry";
 
 export default function Inventory() {
+  const [location] = useLocation();
   const [searchInput, setSearchInput] = useState(""); // User's input
   const [searchQuery, setSearchQuery] = useState(""); // Debounced value for API
   const [page, setPage] = useState(1);
@@ -51,6 +53,15 @@ export default function Inventory() {
   const { user } = useAuth();
 
   const isAdmin = user?.role === "admin";
+
+  // Read filter from URL params on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlFilter = params.get("filter");
+    if (urlFilter === "low_stock" || urlFilter === "near_expiry") {
+      setFilter(urlFilter);
+    }
+  }, [location]);
 
   // Debounce search input
   useEffect(() => {

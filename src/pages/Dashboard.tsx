@@ -3,6 +3,7 @@ import { AlertCard } from "@/components/AlertCard";
 import { Package, DollarSign, TrendingUp, AlertTriangle, Clock, ShoppingCart, XCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocation } from "wouter";
 
 interface DashboardStats {
   total_products: number;
@@ -20,11 +21,20 @@ interface DashboardStats {
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const [, setLocation] = useLocation();
   const { data: stats, isLoading, error } = useQuery<DashboardStats>({
     queryKey: ["/api/dashboard/stats"],
   });
 
   const isAdmin = user?.role === "admin";
+
+  const handleLowStockClick = () => {
+    setLocation("/inventory?filter=low_stock");
+  };
+
+  const handleNearExpiryClick = () => {
+    setLocation("/inventory?filter=near_expiry");
+  };
 
   if (isLoading) {
     return (
@@ -109,12 +119,14 @@ export default function Dashboard() {
           count={stats.low_stock_count}
           icon={AlertTriangle}
           variant="warning"
+          onClick={handleLowStockClick}
         />
         <AlertCard
           title="Near Expiry (30 days)"
           count={stats.near_expiry_count}
           icon={Clock}
           variant="destructive"
+          onClick={handleNearExpiryClick}
         />
       </div>
     </div>
