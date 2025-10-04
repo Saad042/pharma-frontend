@@ -25,18 +25,6 @@ export default function Settings() {
   // Fetch user profile
   const { data: profile, isLoading } = useQuery<UserProfile>({
     queryKey: ["/api/users/profile"],
-    queryFn: async () => {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/users/profile`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
-      if (!res.ok) throw new Error("Failed to fetch profile");
-      return res.json();
-    },
   });
 
   // Set form values when profile data is loaded

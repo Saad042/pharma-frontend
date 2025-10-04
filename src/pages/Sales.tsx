@@ -70,27 +70,6 @@ export default function Sales() {
   // Fetch sales
   const { data, isLoading, error } = useQuery<SalesResponse>({
     queryKey: ["/api/sales/", { search: searchQuery, ordering, page }],
-    queryFn: async () => {
-      const params = new URLSearchParams();
-      if (searchQuery) {
-        params.append("search", searchQuery);
-      }
-      if (ordering) {
-        params.append("ordering", ordering);
-      }
-      params.append("page", page.toString());
-
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/sales/?${params}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
-      if (!res.ok) throw new Error("Failed to fetch sales");
-      return res.json();
-    },
   });
 
   // Cancel sale mutation

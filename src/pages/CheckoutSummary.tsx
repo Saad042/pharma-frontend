@@ -41,18 +41,6 @@ export default function CheckoutSummary() {
   // Fetch sale details
   const { data: sale, isLoading, error } = useQuery<Sale>({
     queryKey: [`/api/sales/${saleId}/`],
-    queryFn: async () => {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/sales/${saleId}/`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
-      if (!res.ok) throw new Error("Failed to fetch sale details");
-      return res.json();
-    },
     enabled: !!saleId,
   });
 

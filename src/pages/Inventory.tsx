@@ -85,26 +85,7 @@ export default function Inventory() {
 
   // Fetch medicines with search, pagination, and filters
   const { data, isLoading, error } = useQuery<MedicinesResponse>({
-    queryKey: [getEndpoint(), { search: searchQuery, page, filter }],
-    queryFn: async () => {
-      const params = new URLSearchParams();
-      if (searchQuery) {
-        params.append("search", searchQuery);
-      }
-      if (filter === "all") {
-        params.append("page", page.toString());
-      }
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}${getEndpoint()}?${params}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
-      if (!res.ok) throw new Error("Failed to fetch medicines");
-      return res.json();
-    },
+    queryKey: [getEndpoint(), { search: searchQuery, page }],
   });
 
   // Delete mutation

@@ -59,22 +59,6 @@ export default function Billing() {
   // Fetch medicines with search
   const { data, isLoading } = useQuery<MedicinesResponse>({
     queryKey: ["/api/medicines/", { search: searchQuery }],
-    queryFn: async () => {
-      const params = new URLSearchParams();
-      if (searchQuery) {
-        params.append("search", searchQuery);
-      }
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/medicines/?${params}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
-      if (!res.ok) throw new Error("Failed to fetch medicines");
-      return res.json();
-    },
   });
 
   // Create sale mutation

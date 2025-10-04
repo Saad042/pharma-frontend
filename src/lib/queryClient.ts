@@ -82,8 +82,27 @@ export const getQueryFn: <T>(options: {
   async ({ queryKey }) => {
     const token = localStorage.getItem("access_token");
     const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
-    const url = queryKey.join("/") as string;
-    const fullUrl = url.startsWith("http") ? url : `${baseUrl}${url}`;
+
+    // Extract base path and query params from queryKey
+    // Expected format: ["/api/path", { param1: value1, ... }] or just ["/api/path"]
+    const basePath = queryKey[0] as string;
+    const queryParams = queryKey[1] as Record<string, any> | undefined;
+
+    // Build URL with query parameters
+    let fullUrl = basePath.startsWith("http") ? basePath : `${baseUrl}${basePath}`;
+
+    if (queryParams && Object.keys(queryParams).length > 0) {
+      const params = new URLSearchParams();
+      for (const [key, value] of Object.entries(queryParams)) {
+        if (value !== undefined && value !== null && value !== "") {
+          params.append(key, String(value));
+        }
+      }
+      const paramString = params.toString();
+      if (paramString) {
+        fullUrl += `?${paramString}`;
+      }
+    }
 
     const headers: Record<string, string> = {};
 
