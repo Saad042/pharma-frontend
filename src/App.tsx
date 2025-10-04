@@ -11,6 +11,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import Dashboard from "@/pages/Dashboard";
 import Inventory from "@/pages/Inventory";
 import Billing from "@/pages/Billing";
+import CheckoutSummary from "@/pages/CheckoutSummary";
 import Settings from "@/pages/Settings";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/" component={Dashboard} />
       <Route path="/inventory" component={Inventory} />
       <Route path="/billing" component={Billing} />
+      <Route path="/checkout/:id" component={CheckoutSummary} />
       <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>

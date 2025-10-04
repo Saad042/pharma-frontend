@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import { ProductSearch } from "@/components/ProductSearch";
 import { BillingCart } from "@/components/BillingCart";
 import { Input } from "@/components/ui/input";
@@ -44,6 +45,7 @@ export default function Billing() {
   const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
 
   // Debounce search input
   useEffect(() => {
@@ -78,9 +80,10 @@ export default function Billing() {
   // Create sale mutation
   const checkoutMutation = useMutation({
     mutationFn: async (saleData: any) => {
-      await apiRequest("POST", "/api/sales/", saleData);
+      const res = await apiRequest("POST", "/api/sales/", saleData);
+      return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       // Invalidate medicines query to refresh stock quantities
       queryClient.invalidateQueries({
         predicate: (query) => {
@@ -88,14 +91,12 @@ export default function Billing() {
           return key?.includes("/api/medicines");
         },
       });
-      toast({
-        title: "Success",
-        description: "Sale completed successfully",
-      });
       // Clear cart and customer info
       setCartItems([]);
       setCustomerName("");
       setCustomerPhone("");
+      // Redirect to checkout summary
+      setLocation(`/checkout/${data.id}`);
     },
     onError: (error: any) => {
       toast({
