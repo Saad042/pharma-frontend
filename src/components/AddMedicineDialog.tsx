@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -17,21 +17,65 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
+
+interface Category {
+  id: number;
+  name: string;
+  created_at: string;
+}
 
 interface AddMedicineDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit?: (data: any) => void;
+  initialData?: {
+    name: string;
+    category: string;
+    quantity: string;
+    price: string;
+    expiryDate: string;
+  };
 }
 
-export function AddMedicineDialog({ open, onOpenChange, onSubmit }: AddMedicineDialogProps) {
-  const [formData, setFormData] = useState({
-    name: "",
-    category: "",
-    quantity: "",
-    price: "",
-    expiryDate: "",
+export function AddMedicineDialog({ open, onOpenChange, onSubmit, initialData }: AddMedicineDialogProps) {
+  // Initialize form data from initialData or empty
+  const getInitialFormData = () => {
+    if (initialData) {
+      return initialData;
+    }
+    return {
+      name: "",
+      category: "",
+      quantity: "",
+      price: "",
+      expiryDate: "",
+    };
+  };
+
+  const [formData, setFormData] = useState(getInitialFormData());
+
+  // Fetch categories
+  const { data: categories } = useQuery<Category[]>({
+    queryKey: ["/api/categories/"],
+    enabled: open,
   });
+
+  // Update form data when dialog opens or initialData changes
+  useEffect(() => {
+    if (open && initialData) {
+      setFormData(initialData);
+    } else if (open && !initialData) {
+      // Reset for new entry
+      setFormData({
+        name: "",
+        category: "",
+        quantity: "",
+        price: "",
+        expiryDate: "",
+      });
+    }
+  }, [open, initialData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,9 +88,11 @@ export function AddMedicineDialog({ open, onOpenChange, onSubmit }: AddMedicineD
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Add New Medicine</DialogTitle>
+          <DialogTitle>{initialData ? "Edit Medicine" : "Add New Medicine"}</DialogTitle>
           <DialogDescription>
-            Enter the details of the medicine to add to inventory.
+            {initialData
+              ? "Update the details of the medicine."
+              : "Enter the details of the medicine to add to inventory."}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
@@ -73,11 +119,11 @@ export function AddMedicineDialog({ open, onOpenChange, onSubmit }: AddMedicineD
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Pain Relief">Pain Relief</SelectItem>
-                  <SelectItem value="Antibiotic">Antibiotic</SelectItem>
-                  <SelectItem value="Vitamin">Vitamin</SelectItem>
-                  <SelectItem value="Cold & Flu">Cold & Flu</SelectItem>
-                  <SelectItem value="Digestive">Digestive</SelectItem>
+                  {categories?.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id.toString()}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -130,7 +176,7 @@ export function AddMedicineDialog({ open, onOpenChange, onSubmit }: AddMedicineD
               Cancel
             </Button>
             <Button type="submit" data-testid="button-save-medicine">
-              Save Medicine
+              {initialData ? "Update Medicine" : "Save Medicine"}
             </Button>
           </DialogFooter>
         </form>
