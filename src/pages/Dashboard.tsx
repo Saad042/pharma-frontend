@@ -86,14 +86,14 @@ export default function Dashboard() {
             value={stats.total_products.toString()}
             icon={Package}
           />
-          <DashboardCard
+          {/* <DashboardCard
             title="Total Sales"
             value={`$${stats.total_sales.toFixed(2)}`}
             icon={DollarSign}
-          />
+          /> */}
           <DashboardCard
             title="Revenue"
-            value={`$${stats.revenue.toFixed(2)}`}
+            value={`Rs${stats.revenue.toFixed(2)}`}
             icon={TrendingUp}
             trend={formatTrend(stats.trends.revenue_change)}
             trendPositive={stats.trends.revenue_change >= 0}

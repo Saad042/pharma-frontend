@@ -192,7 +192,7 @@ export default function Sales() {
                       <TableCell>{sale.customer_name}</TableCell>
                       <TableCell>{sale.customer_phone}</TableCell>
                       <TableCell className="font-semibold tabular-nums">
-                        ${parseFloat(sale.total).toFixed(2)}
+                        Rs{parseFloat(sale.total).toFixed(2)}
                       </TableCell>
                       <TableCell>
                         <Badge

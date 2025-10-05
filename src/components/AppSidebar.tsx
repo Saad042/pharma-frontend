@@ -49,7 +49,7 @@ export function AppSidebar() {
             <Pill className="h-6 w-6 text-primary-foreground" />
           </div>
           <div className="flex-1">
-            <h2 className="text-lg font-semibold">PharmaCare</h2>
+            <h2 className="text-lg font-semibold">Azwa Pharmacy of BHMC</h2>
             <p className="text-xs text-muted-foreground">Management System</p>
           </div>
         </div>

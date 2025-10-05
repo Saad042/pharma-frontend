@@ -46,7 +46,7 @@ export function BillingCart({
               <div key={item.id} className="flex items-center gap-3" data-testid={`cart-item-${item.id}`}>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{item.name}</p>
-                  <p className="text-xs text-muted-foreground">${item.price.toFixed(2)}</p>
+                  <p className="text-xs text-muted-foreground">Rs{item.price.toFixed(2)}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
@@ -94,16 +94,16 @@ export function BillingCart({
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Subtotal</span>
-            <span className="tabular-nums">${subtotal.toFixed(2)}</span>
+            <span className="tabular-nums">Rs{subtotal.toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Tax (10%)</span>
-            <span className="tabular-nums">${tax.toFixed(2)}</span>
+            <span className="tabular-nums">Rs{tax.toFixed(2)}</span>
           </div>
           <Separator />
           <div className="flex justify-between text-lg font-bold">
             <span>Total</span>
-            <span className="tabular-nums" data-testid="text-total">${total.toFixed(2)}</span>
+            <span className="tabular-nums" data-testid="text-total">Rs{total.toFixed(2)}</span>
           </div>
         </div>
 

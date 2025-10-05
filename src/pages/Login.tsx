@@ -63,7 +63,7 @@ export default function Login({ onLogin }: LoginProps) {
             <Pill className="h-10 w-10 text-primary-foreground" />
           </div>
           <div className="text-center">
-            <h1 className="text-3xl font-bold">PharmaCare</h1>
+            <h1 className="text-3xl font-bold">Azwa Pharmacy of BHMC</h1>
             <p className="text-muted-foreground">Management System</p>
           </div>
         </div>

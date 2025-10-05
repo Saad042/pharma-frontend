@@ -91,7 +91,7 @@ export function ProductSearch({
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <span className="font-semibold tabular-nums">${product.price.toFixed(2)}</span>
+                <span className="font-semibold tabular-nums">Rs{product.price.toFixed(2)}</span>
                 <Button
                   size="icon"
                   onClick={() => onAddToCart(product)}

@@ -74,14 +74,22 @@ export function AddMedicineDialog({ open, onOpenChange, onSubmit, initialData }:
         price: "",
         expiryDate: "",
       });
+    } else if (!open) {
+      // Clear form when dialog closes
+      setFormData({
+        name: "",
+        category: "",
+        quantity: "",
+        price: "",
+        expiryDate: "",
+      });
     }
   }, [open, initialData]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit?.(formData);
-    onOpenChange(false);
-    setFormData({ name: "", category: "", quantity: "", price: "", expiryDate: "" });
+    // Don't close dialog here - let the parent's mutation onSuccess handler do it
   };
 
   return (
@@ -141,7 +149,7 @@ export function AddMedicineDialog({ open, onOpenChange, onSubmit, initialData }:
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="price">Price ($) *</Label>
+                <Label htmlFor="price">Price (Rs) *</Label>
                 <Input
                   id="price"
                   type="number"
